@@ -1,3 +1,11 @@
+require "dotenv/load"
+
+DB_NAME = ENV["DB_NAME"]
+DB_USER = ENV["DB_USER"]
+DB_PASSWORD = ENV["DB_PASSWORD"]
+DB_HOST = ENV["DB_HOST"]
+DB_PORT = ENV["DB_PORT"]
+
 Vagrant.configure("2") do |config|
 
     config.vm.define "proxy" do |proxy|
@@ -60,6 +68,12 @@ Vagrant.configure("2") do |config|
                 git \
                 build-essential \
                 mysql-client
+            
+            echo "DB_HOST=#{DB_HOST}" > /home/vagrant/app/.env.local
+            echo "DB_PORT=#{DB_PORT}" >> /home/vagrant/app/.env.local
+            echo "DB_NAME=#{DB_NAME}" >> /home/vagrant/app/.env.local
+            echo "DB_USER=#{DB_USER}" >> /home/vagrant/app/.env.local
+            echo "DB_PASSWORD=#{DB_PASSWORD}" >> /home/vagrant/app/.env.local
 
             echo "==> Instalando Node.js..."
             curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
@@ -103,19 +117,19 @@ Vagrant.configure("2") do |config|
             #Restarta o mysql para aplicar configuracao
             sudo systemctl restart mysql
 
-            #Cria database e configura usuario e senha
-            sudo mysql -e "CREATE DATABASE IF NOT EXISTS app_db;"
-            sudo mysql -e "CREATE USER IF NOT EXISTS 'app_user'@'192.168.56.20' IDENTIFIED BY 'admin';"
+            #Configura usuario e senha
+            sudo mysql -e "CREATE USER IF NOT EXISTS '#{DB_USER}'@'192.168.56.20' IDENTIFIED BY '#{DB_PASSWORD}';"
 
-            #Concede permissoes totais sobre o banco app_db ao usuario
-            sudo mysql -e "GRANT ALL PRIVILEGES ON app_db.* TO 'app_user'@'192.168.56.20';"
-            sudo mysql -e "FLUSH PRIVILEGES;"
-
-            #Construi todas as tabelas do banco de dados, caso exista a pasta /db
+            # Importa banco e tabelas
             if [ -f "/home/vagrant/db/schema.sql" ]; then
                 echo "--> Importando tabelas do schema.sql..."
-                sudo mysql app_db < /home/vagrant/db/schema.sql
-            fi
+                sudo mysql < /home/vagrant/db/schema.sql
+            fi      
+
+            #Concede permissoes totais sobre a db ao usuario
+            sudo mysql -e "GRANT ALL PRIVILEGES ON #{DB_NAME}.* TO '#{DB_USER}'@'192.168.56.20';"
+            sudo mysql -e "FLUSH PRIVILEGES;"
+
 
         SHELL
     end
