@@ -11,13 +11,23 @@ Vagrant.configure("2") do |config|
             vb.name = "VM1-proxy"
         end
 
+        proxy.vm.synced_folder "./nginx", "/home/vagrant/nginx"
+
         proxy.vm.provision "shell", inline: <<-SHELL
 
             sudo apt-get -y update && sudo apt-get -y upgrade
             sudo apt-get install -y nginx openssl net-tools
+            sudo cp /home/vagrant/nginx/reverse-proxy.conf \
+                    /etc/nginx/sites-available/reverse-proxy
 
+            sudo rm -f /etc/nginx/sites-enabled/default
 
-        
+            sudo ln -sf \
+                /etc/nginx/sites-available/reverse-proxy \
+                /etc/nginx/sites-enabled/reverse-proxy
+
+            sudo nginx -t
+            sudo systemctl restart nginx
         SHELL
     end
 
@@ -38,14 +48,32 @@ Vagrant.configure("2") do |config|
         appserver.vm.synced_folder "./web", "/home/vagrant/app"
 
         appserver.vm.provision "shell", inline: <<-SHELL
-            #Interrompe a execucao do script caso qualquer comando falhe
-            set -e 
+            set -e
 
-            #Atualiza SO
-            sudo apt-get -y update && sudo apt-get -y upgrade
+            echo "==> Atualizando sistema..."
+            sudo apt-get update
 
-            #Baixa os pacotes basicos
-            sudo apt-get install -y net-tools curl git build-essential mysql-client
+            echo "==> Instalando pacotes..."
+            sudo apt-get install -y \
+                net-tools \
+                curl \
+                git \
+                build-essential \
+                mysql-client
+
+            echo "==> Instalando Node.js..."
+            curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+
+            echo "==> Verificando Node.js..."
+            node --version
+            npm --version
+
+            echo "==> Instalando dependências do projeto..."
+            cd /home/vagrant/app
+            npm install
+
+            echo "==> Dependências instaladas com sucesso!"
 
         SHELL
     end
