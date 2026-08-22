@@ -14,9 +14,9 @@ Vagrant.configure("2") do |config|
         proxy.vm.provision "shell", inline: <<-SHELL
 
             sudo apt-get -y update && sudo apt-get -y upgrade
-            sudo apt-get install -y nginx
-            sudo apt-get install -y openssl
-            sudo apt-get install -y net-tools
+            sudo apt-get install -y nginx openssl net-tools
+
+
         
         SHELL
     end
@@ -35,7 +35,7 @@ Vagrant.configure("2") do |config|
         end
 
         #Sincroniza a pasta do projeto com a pasta da VM, permitindo alteracoes em tempo real
-        appserver.vm.synced_folder ".", "/home/vagrant/app"
+        appserver.vm.synced_folder "./web", "/home/vagrant/app"
 
         appserver.vm.provision "shell", inline: <<-SHELL
             #Interrompe a execucao do script caso qualquer comando falhe
@@ -46,18 +46,6 @@ Vagrant.configure("2") do |config|
 
             #Baixa os pacotes basicos
             sudo apt-get install -y net-tools curl git build-essential mysql-client
-
-            sudo -u vagrant cat << 'EOF' > $TARGET_DIR/.env
-                # String de conexão padrão para ORMs (Prisma, Drizzle, TypeORM, etc)
-                DATABASE_URL="mysql://app_user:admin@192.168.56.30:3306/app_db"
-
-                # Variáveis individuais (caso utilize o driver 'mysql2' diretamente)
-                DB_HOST="192.168.56.30"
-                DB_PORT="3306"
-                DB_USER="app_user"
-                DB_PASSWORD="admin"
-                DB_NAME="app_db"
-            EOF
 
         SHELL
     end
@@ -74,6 +62,8 @@ Vagrant.configure("2") do |config|
             vb.cpus = 2
             vb.name = "VM3-DB"
         end
+
+        db.vm.synced_folder "./db", "/home/vagrant/db"
 
         db.vm.provision "shell", inline: <<-SHELL
 
@@ -92,6 +82,13 @@ Vagrant.configure("2") do |config|
             #Concede permissoes totais sobre o banco app_db ao usuario
             sudo mysql -e "GRANT ALL PRIVILEGES ON app_db.* TO 'app_user'@'192.168.56.20';"
             sudo mysql -e "FLUSH PRIVILEGES;"
+
+            #Construi todas as tabelas do banco de dados, caso exista a pasta /db
+            if [ -f "/home/vagrant/db/schema.sql" ]; then
+                echo "--> Importando tabelas do schema.sql..."
+                sudo mysql app_db < /home/vagrant/db/schema.sql
+            fi
+
         SHELL
     end
 
