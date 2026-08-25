@@ -45,6 +45,13 @@ cp .env.example .env
 
 Preencha as credenciais no `.env` (não versionado). Consulte `.env.example` para as variáveis necessárias.
 
+## PLUGINS
+
+''bash
+vagrant plugin install dotenv
+gem install dotenv
+''
+
 ## Uso
 
 ```bash
