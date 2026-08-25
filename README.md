@@ -47,10 +47,10 @@ Preencha as credenciais no `.env` (não versionado). Consulte `.env.example` par
 
 ## PLUGINS
 
-''bash
+```bash
 vagrant plugin install dotenv
 gem install dotenv
-''
+```
 
 ## Uso
 
