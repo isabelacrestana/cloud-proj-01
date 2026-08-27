@@ -75,7 +75,8 @@ Vagrant.configure("2") do |config|
                 curl \
                 git \
                 build-essential \
-                mysql-client
+                mysql-client \
+
             
             echo "DB_HOST=#{DB_HOST}" > /home/vagrant/app/.env.local
             echo "DB_PORT=#{DB_PORT}" >> /home/vagrant/app/.env.local
@@ -94,6 +95,7 @@ Vagrant.configure("2") do |config|
             echo "==> Instalando dependências do projeto..."
             cd /home/vagrant/app
             npm install
+            npm run dev --webpack
 
             echo "==> Dependências instaladas com sucesso!"
 
