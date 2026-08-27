@@ -11,7 +11,10 @@ Vagrant.configure("2") do |config|
     config.vm.define "proxy" do |proxy|
         proxy.vm.box = "ubuntu/focal64"
         proxy.vm.hostname = "proxy"
-        proxy.vm.network "private_network", ip: "192.168.56.10", netmask: "255.255.255.0"
+        proxy.vm.network "private_network", ip: "192.168.57.10", netmask: "255.255.255.0"
+
+        proxy.vm.network "private_network", ip: "192.168.56.10",
+                         netmask: "255.255.255.0", virtualbox__intnet: "rede_interna"
 
         proxy.vm.provider "virtualbox" do |vb|
             vb.memory = "1024"
@@ -36,6 +39,10 @@ Vagrant.configure("2") do |config|
 
             sudo nginx -t
             sudo systemctl restart nginx
+
+            echo "=================================================="
+            echo "  ACESSE A APLICACAO EM: http://192.168.57.10"
+            echo "=================================================="
         SHELL
     end
 
@@ -44,7 +51,8 @@ Vagrant.configure("2") do |config|
     config.vm.define "appserver" do |appserver|
         appserver.vm.box = "ubuntu/focal64"
         appserver.vm.hostname = "appserver"
-        appserver.vm.network "private_network", ip: "192.168.56.20", netmask: "255.255.255.0"
+        appserver.vm.network "private_network", ip: "192.168.56.20",
+                             netmask: "255.255.255.0", virtualbox__intnet: "rede_interna"
 
         appserver.vm.provider "virtualbox" do |vb|
             vb.memory = "1024"
@@ -97,7 +105,8 @@ Vagrant.configure("2") do |config|
     config.vm.define "DB" do |db|
         db.vm.box = "ubuntu/focal64"
         db.vm.hostname = "DB"
-        db.vm.network "private_network", ip: "192.168.56.30", netmask: "255.255.255.0"
+        db.vm.network "private_network", ip: "192.168.56.30",
+                      netmask: "255.255.255.0", virtualbox__intnet: "rede_interna"
 
         db.vm.provider "virtualbox" do |vb|
             vb.memory = "2048"
