@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Campo } from "../campo";
 
@@ -8,12 +9,35 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
+  const router = useRouter();
 
-  function handleSubmit(evento: React.FormEvent) {
+  async function handleSubmit(evento: React.FormEvent) {
     evento.preventDefault();
     setErro(null);
+    setEnviando(true);
 
-    // TODO: enviar para POST /api/auth/login
+    try {
+      const resposta = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, senha }),
+      });
+
+      const dados = await resposta.json();
+
+      if (!resposta.ok) {
+        setErro(dados.erro ?? "Nao foi possivel entrar.");
+        return;
+      }
+
+      router.push(dados.papel === "admin" ? "/admin" : "/cliente");
+      router.refresh();
+    } catch {
+      setErro("Falha de conexao. Tente novamente.");
+    } finally {
+      setEnviando(false);
+    }
   }
 
   return (
@@ -57,9 +81,10 @@ export default function LoginPage() {
 
         <button
           type="submit"
-          className="mt-3 rounded-full bg-[#0b1a2b] py-3 text-lg font-medium tracking-wide text-white transition hover:bg-[#16334f]"
+          disabled={enviando}
+          className="mt-3 rounded-full bg-[#0b1a2b] py-3 text-lg font-medium tracking-wide text-white transition hover:bg-[#16334f] disabled:opacity-60"
         >
-          Entrar
+          {enviando ? "Entrando..." : "Entrar"}
         </button>
       </form>
     </>
