@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { Campo } from "../campo";
 
 export default function CadastroPage() {
   const [nome, setNome] = useState("");
@@ -28,109 +29,77 @@ export default function CadastroPage() {
   }
 
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-      <h1 className="text-xl font-semibold">Criar conta</h1>
-      <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-        Preencha os dados para se cadastrar no clube.
-      </p>
+    <>
+      <h1 className="text-center text-2xl font-semibold text-[#1a3a52]">
+        Criar conta
+      </h1>
 
-      <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="mt-7 flex flex-col gap-3">
         <Campo
           id="nome"
-          rotulo="Nome completo"
+          placeholder="Nome completo"
           valor={nome}
           aoAlterar={setNome}
+          icone="usuario"
           autoComplete="name"
         />
         <Campo
           id="email"
-          rotulo="E-mail"
           tipo="email"
+          placeholder="E-mail"
           valor={email}
           aoAlterar={setEmail}
+          icone="email"
           autoComplete="email"
         />
         <Campo
           id="telefone"
-          rotulo="Telefone"
           tipo="tel"
+          placeholder="Telefone (opcional)"
           valor={telefone}
           aoAlterar={setTelefone}
+          icone="telefone"
           autoComplete="tel"
           obrigatorio={false}
         />
         <Campo
           id="senha"
-          rotulo="Senha"
           tipo="password"
+          placeholder="Senha"
           valor={senha}
           aoAlterar={setSenha}
+          icone="senha"
           autoComplete="new-password"
         />
         <Campo
           id="confirmacao"
-          rotulo="Confirmar senha"
           tipo="password"
+          placeholder="Confirmar senha"
           valor={confirmacao}
           aoAlterar={setConfirmacao}
+          icone="senha"
           autoComplete="new-password"
         />
 
+        <div className="px-1 text-xs text-[#1a3a52]">
+          <Link href="/login" className="font-medium hover:underline">
+            Ja tenho conta
+          </Link>
+        </div>
+
         {erro && (
-          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+          <p role="alert" className="px-1 text-sm text-red-700">
             {erro}
           </p>
         )}
 
         <button
           type="submit"
-          className="rounded-md bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+          className="mt-3 rounded-full bg-[#0b1a2b] py-3 text-lg font-medium tracking-wide text-white transition hover:bg-[#16334f]"
         >
           Cadastrar
         </button>
       </form>
-
-      <p className="mt-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
-        Ja tem conta?{" "}
-        <Link href="/login" className="font-medium underline underline-offset-4">
-          Entrar
-        </Link>
-      </p>
-    </div>
-  );
-}
-
-function Campo({
-  id,
-  rotulo,
-  valor,
-  aoAlterar,
-  tipo = "text",
-  autoComplete,
-  obrigatorio = true,
-}: {
-  id: string;
-  rotulo: string;
-  valor: string;
-  aoAlterar: (valor: string) => void;
-  tipo?: string;
-  autoComplete?: string;
-  obrigatorio?: boolean;
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-medium">
-        {rotulo}
-      </label>
-      <input
-        id={id}
-        type={tipo}
-        value={valor}
-        onChange={(e) => aoAlterar(e.target.value)}
-        required={obrigatorio}
-        autoComplete={autoComplete}
-        className="rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-950"
-      />
-    </div>
+    </>
   );
 }

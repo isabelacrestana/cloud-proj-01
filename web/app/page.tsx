@@ -1,27 +1,28 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-8 p-8">
-      <div className="text-center">
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-          Clube Reservas
-        </h1>
-        <p className="mt-3 text-zinc-600 dark:text-zinc-400">
-          Reserve quadras do clube poliesportivo de forma rapida e simples.
-        </p>
-      </div>
+    <main className="flex flex-1 flex-col items-center justify-center gap-10 bg-white px-4 py-12">
+      <Image
+        src="/logo-clube.png"
+        alt="Clube Poliesportivo Campineiro - esporte, saude e convivencia"
+        width={800}
+        height={537}
+        priority
+        className="h-auto w-full max-w-lg"
+      />
 
       <div className="flex w-full max-w-xs flex-col gap-3">
         <Link
           href="/login"
-          className="rounded-md bg-zinc-900 px-4 py-2.5 text-center text-sm font-medium text-white transition hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+          className="rounded-full bg-[#0b1a2b] py-3 text-center text-base font-medium text-white transition hover:bg-[#16334f]"
         >
           Entrar
         </Link>
         <Link
           href="/cadastro"
-          className="rounded-md border border-zinc-300 px-4 py-2.5 text-center text-sm font-medium transition hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
+          className="rounded-full border border-[#b08d57] py-3 text-center text-base font-medium text-[#1a3a52] transition hover:bg-[#f5f1e8]"
         >
           Criar conta
         </Link>
