@@ -18,7 +18,7 @@ Vagrant.configure("2") do |config|
 
         proxy.vm.provider "virtualbox" do |vb|
             vb.memory = "1024"
-            vb.cpus = 2
+            vb.cpus = 1
             vb.name = "VM1-proxy"
         end
 
@@ -95,9 +95,29 @@ Vagrant.configure("2") do |config|
             echo "==> Instalando dependências do projeto..."
             cd /home/vagrant/app
             npm install
-            npm run dev --webpack
 
-            echo "==> Dependências instaladas com sucesso!"
+            echo "==> Configurando servico do Next.js..."
+            sudo tee /etc/systemd/system/clube-app.service > /dev/null <<'UNIT'
+[Unit]
+Description=Clube Reservas - Next.js
+After=network-online.target
+
+[Service]
+Type=simple
+User=vagrant
+WorkingDirectory=/home/vagrant/app
+ExecStart=/usr/bin/npm run dev -- --webpack
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+            sudo systemctl daemon-reload
+            sudo systemctl enable --now clube-app
+
+            echo "==> Aplicacao disponivel via proxy em http://192.168.57.10"
 
         SHELL
     end
@@ -112,7 +132,7 @@ Vagrant.configure("2") do |config|
 
         db.vm.provider "virtualbox" do |vb|
             vb.memory = "2048"
-            vb.cpus = 2
+            vb.cpus = 1
             vb.name = "VM3-DB"
         end
 
