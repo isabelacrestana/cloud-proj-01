@@ -18,7 +18,7 @@ Vagrant.configure("2") do |config|
 
         proxy.vm.provider "virtualbox" do |vb|
             vb.memory = "1024"
-            vb.cpus = 2
+            vb.cpus = 1
             vb.name = "VM1-proxy"
         end
 
@@ -132,7 +132,7 @@ UNIT
 
         db.vm.provider "virtualbox" do |vb|
             vb.memory = "2048"
-            vb.cpus = 2
+            vb.cpus = 1
             vb.name = "VM3-DB"
         end
 
