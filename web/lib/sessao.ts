@@ -1,45 +1,69 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
+import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 
 const NOME_COOKIE = "sessao";
 const DURACAO_SEGUNDOS = 60 * 60 * 8; // 8 horas
+const ALGORITMO = "HS256";
+
+export type Papel = "cliente" | "admin";
 
 export type Sessao = {
   id: number;
-  papel: "cliente" | "admin";
-  exp: number; // epoch em segundos
+  papel: Papel;
 };
 
-function segredo(): string {
-  const valor = process.env.SESSION_SECRET;
+/**
+ * A chave vira bytes uma vez por processo. Usamos jose (e nao node:crypto)
+ * porque o middleware roda no Edge Runtime, onde as APIs do Node nao existem:
+ * assim o mesmo codigo de verificacao serve para o middleware e para as rotas.
+ */
+function chave(): Uint8Array {
+  const valor = process.env.JWT_SECRET;
   if (!valor || valor.length < 32) {
     throw new Error(
-      "SESSION_SECRET ausente ou muito curto (minimo 32 caracteres).",
+      "JWT_SECRET ausente ou muito curto (minimo 32 caracteres).",
     );
   }
-  return valor;
+  return new TextEncoder().encode(valor);
 }
 
-function assinar(dados: string): string {
-  return createHmac("sha256", segredo()).update(dados).digest("base64url");
+export async function assinarToken(id: number, papel: Papel): Promise<string> {
+  return new SignJWT({ papel })
+    .setProtectedHeader({ alg: ALGORITMO })
+    .setSubject(String(id))
+    .setIssuedAt()
+    .setExpirationTime(`${DURACAO_SEGUNDOS}s`)
+    .sign(chave());
 }
 
 /**
- * O cookie guarda os dados em claro mais uma assinatura HMAC. Qualquer
- * alteracao no conteudo (trocar o papel para "admin", por exemplo) invalida a
- * assinatura, porque quem altera nao conhece o SESSION_SECRET.
+ * Verifica assinatura e expiracao. Qualquer falha devolve null: token
+ * adulterado, expirado, assinado com outra chave ou com algoritmo diferente.
  */
-export async function criarSessao(id: number, papel: Sessao["papel"]) {
-  const sessao: Sessao = {
-    id,
-    papel,
-    exp: Math.floor(Date.now() / 1000) + DURACAO_SEGUNDOS,
-  };
+export async function verificarToken(token: string): Promise<Sessao | null> {
+  try {
+    const { payload } = await jwtVerify(token, chave(), {
+      algorithms: [ALGORITMO], // fixo: impede o ataque de trocar alg para "none"
+    });
+    return dosPayload(payload);
+  } catch {
+    return null;
+  }
+}
 
-  const dados = Buffer.from(JSON.stringify(sessao)).toString("base64url");
-  const valor = `${dados}.${assinar(dados)}`;
+function dosPayload(payload: JWTPayload): Sessao | null {
+  const id = Number(payload.sub);
+  const papel = payload.papel;
+  if (!Number.isInteger(id) || (papel !== "cliente" && papel !== "admin")) {
+    return null;
+  }
+  return { id, papel };
+}
 
-  (await cookies()).set(NOME_COOKIE, valor, {
+export async function criarSessao(id: number, papel: Papel) {
+  const token = await assinarToken(id, papel);
+
+  (await cookies()).set(NOME_COOKIE, token, {
     httpOnly: true, // JavaScript da pagina nao consegue ler
     sameSite: "lax", // nao acompanha requisicoes vindas de outros sites
     secure: process.env.NODE_ENV === "production", // so por HTTPS em producao
@@ -49,30 +73,13 @@ export async function criarSessao(id: number, papel: Sessao["papel"]) {
 }
 
 export async function lerSessao(): Promise<Sessao | null> {
-  const bruto = (await cookies()).get(NOME_COOKIE)?.value;
-  if (!bruto) return null;
-
-  const [dados, assinatura] = bruto.split(".");
-  if (!dados || !assinatura) return null;
-
-  const esperada = assinar(dados);
-  const a = Buffer.from(assinatura);
-  const b = Buffer.from(esperada);
-  // Comparacao em tempo constante: comparar com === vazaria informacao pelo
-  // tempo de resposta, permitindo descobrir a assinatura byte a byte.
-  if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
-
-  try {
-    const sessao = JSON.parse(
-      Buffer.from(dados, "base64url").toString(),
-    ) as Sessao;
-    if (sessao.exp < Math.floor(Date.now() / 1000)) return null;
-    return sessao;
-  } catch {
-    return null;
-  }
+  const token = (await cookies()).get(NOME_COOKIE)?.value;
+  if (!token) return null;
+  return verificarToken(token);
 }
 
 export async function encerrarSessao() {
   (await cookies()).delete(NOME_COOKIE);
 }
+
+export const COOKIE_SESSAO = NOME_COOKIE;

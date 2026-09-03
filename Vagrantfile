@@ -5,7 +5,7 @@ DB_USER = ENV["DB_USER"]
 DB_PASSWORD = ENV["DB_PASSWORD"]
 DB_HOST = ENV["DB_HOST"]
 DB_PORT = ENV["DB_PORT"]
-SESSION_SECRET = ENV["SESSION_SECRET"]
+JWT_SECRET = ENV["JWT_SECRET"]
 
 Vagrant.configure("2") do |config|
 
@@ -84,7 +84,7 @@ Vagrant.configure("2") do |config|
             echo "DB_NAME=#{DB_NAME}" >> /home/vagrant/app/.env.local
             echo "DB_USER=#{DB_USER}" >> /home/vagrant/app/.env.local
             echo "DB_PASSWORD=#{DB_PASSWORD}" >> /home/vagrant/app/.env.local
-            echo "SESSION_SECRET=#{SESSION_SECRET}" >> /home/vagrant/app/.env.local
+            echo "JWT_SECRET=#{JWT_SECRET}" >> /home/vagrant/app/.env.local
 
             echo "==> Instalando Node.js..."
             curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
