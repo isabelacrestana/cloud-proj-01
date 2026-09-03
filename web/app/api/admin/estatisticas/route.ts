@@ -1,0 +1,8 @@
+import { NextResponse } from "next/server";
+
+export async function GET() {
+  return NextResponse.json(
+    { erro: "Nao implementado" },
+    { status: 501 },
+  );
+}
