@@ -8,7 +8,7 @@ export default function Home() {
           Clube Reservas
         </h1>
         <p className="mt-3 text-zinc-600 dark:text-zinc-400">
-          Reserve quadras do clube de forma rapida e simples.
+          Reserve quadras do clube poliesportivo de forma rapida e simples.
         </p>
       </div>
 
