@@ -31,10 +31,3 @@ INSERT IGNORE INTO quadra (nome, modalidade, coberta, valor_hora) VALUES
   ('Ginasio Coberto',   'poliesportiva', TRUE,  120.00),
   ('Society A',         'futsal',        FALSE,  90.00),
   ('Arena de Areia',    'beach_tennis',  FALSE,  70.00);
-  -- Novas quadras adicionadas abaixo:
-  ('Ginasio Volei Principal', 'volei',         TRUE,  100.00),
-  ('Quadra Externa Volei',    'volei',         FALSE,  50.00),
-  ('Basquete Street',         'basquete',      FALSE,  40.00),
-  ('Basquete Premium',        'basquete',      TRUE,   95.00),
-  ('Arena Beach 2',           'beach_tennis',  FALSE,  70.00),
-  ('Quadra 3 - Coberta',      'tenis',         TRUE,   85.00);
