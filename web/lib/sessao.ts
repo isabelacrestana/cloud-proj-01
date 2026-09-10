@@ -66,7 +66,10 @@ export async function criarSessao(id: number, papel: Papel) {
   (await cookies()).set(NOME_COOKIE, token, {
     httpOnly: true, // JavaScript da pagina nao consegue ler
     sameSite: "lax", // nao acompanha requisicoes vindas de outros sites
-    secure: process.env.NODE_ENV === "production", // so por HTTPS em producao
+    // O atributo Secure faz o navegador so devolver o cookie por HTTPS.
+    // Depende do TLS existir, nao do modo de execucao: com npm start em
+    // HTTP, ativa-lo impediria qualquer login. Ligar quando houver TLS.
+    secure: process.env.COOKIE_SECURE === "true",
     path: "/",
     maxAge: DURACAO_SEGUNDOS,
   });

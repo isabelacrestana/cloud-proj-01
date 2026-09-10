@@ -1,30 +1,11 @@
 // CRUD das quadras
 
 import { NextResponse } from "next/server";                                                                                  
-import type { RowDataPacket, ResultSetHeader } from "mysql2";                                                                
+import type { ResultSetHeader } from "mysql2";                                                                
 import { pool } from "@/lib/db";                                                                                             
-import { lerSessao } from "@/lib/sessao";                                                                                    
+import { lerSessao } from "@/lib/sessao";
+import { MODALIDADES, type Modalidade, type Quadra } from "@/lib/quadras";                                                                                    
                                                                                                                                 
-// Modalidades válidas esperadas pela tabela do MySQL                                                                         
-export const MODALIDADES = [                                                                                                 
-    "tenis",                                                                                                                   
-    "futsal",                                                                                                                  
-    "volei",                                                                                                                   
-    "basquete",                                                                                                                
-    "beach_tennis",                                                                                                            
-    "poliesportiva",                                                                                                           
-] as const;                                                                                                                  
-                                                                                                                                
-export type Modalidade = (typeof MODALIDADES)[number];                                                                       
-                                                                                                                                
-export type Quadra = RowDataPacket & {                                                                                       
-    id: number;                                                                                                                
-    nome: string;                                                                                                              
-    modalidade: Modalidade;                                                                                                    
-    coberta: boolean | number;                                                                                                 
-    valor_hora: number | string;                                                                                               
-    ativa: boolean | number;                                                                                                   
-};                                                                                                                           
                                                                                                                                 
 // 1. GET: Retorna todas as quadras                                                                                          
 export async function GET() {                                                                                                

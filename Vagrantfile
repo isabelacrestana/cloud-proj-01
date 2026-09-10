@@ -6,6 +6,7 @@ DB_PASSWORD = ENV["DB_PASSWORD"]
 DB_HOST = ENV["DB_HOST"]
 DB_PORT = ENV["DB_PORT"]
 JWT_SECRET = ENV["JWT_SECRET"]
+COOKIE_SECURE = ENV["COOKIE_SECURE"]
 
 Vagrant.configure("2") do |config|
 
@@ -85,6 +86,7 @@ Vagrant.configure("2") do |config|
             echo "DB_USER=#{DB_USER}" >> /home/vagrant/app/.env.local
             echo "DB_PASSWORD=#{DB_PASSWORD}" >> /home/vagrant/app/.env.local
             echo "JWT_SECRET=#{JWT_SECRET}" >> /home/vagrant/app/.env.local
+            echo "COOKIE_SECURE=#{COOKIE_SECURE}" >> /home/vagrant/app/.env.local
 
             echo "==> Instalando Node.js..."
             curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
@@ -96,7 +98,14 @@ Vagrant.configure("2") do |config|
 
             echo "==> Instalando dependências do projeto..."
             cd /home/vagrant/app
-            npm install
+          
+            npm install --no-bin-links
+
+            echo "==> Compilando a aplicacao (modo producao)..."
+            # --webpack: o next.config.ts define watchOptions do webpack (polling
+            # para o synced_folder), e o Turbopack, padrao no Next 16, recusa o
+            # build quando encontra configuracao de webpack sem a dele.
+            npm run build -- --webpack
 
             echo "==> Configurando servico do Next.js..."
             sudo tee /etc/systemd/system/clube-app.service > /dev/null <<'UNIT'
@@ -108,7 +117,7 @@ After=network-online.target
 Type=simple
 User=vagrant
 WorkingDirectory=/home/vagrant/app
-ExecStart=/usr/bin/npm run dev -- --webpack
+ExecStart=/usr/bin/npm run start
 Restart=always
 RestartSec=5
 

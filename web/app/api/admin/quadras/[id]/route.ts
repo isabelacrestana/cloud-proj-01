@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { ResultSetHeader } from "mysql2";                                                                               
 import { pool } from "@/lib/db";                                                                                             
 import { lerSessao } from "@/lib/sessao";                                                                                    
-import { MODALIDADES, type Modalidade } from "../route";                                                                     
+import { MODALIDADES, type Modalidade } from "@/lib/quadras";                                                                     
                                                                                                                                 
 type Contexto = {                                                                                                            
     params: Promise<{ id: string }>;                                                                                           
