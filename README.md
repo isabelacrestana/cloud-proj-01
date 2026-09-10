@@ -264,7 +264,7 @@ inalcançáveis do hospedeiro, mas continuam se comunicando pela rede interna.
 - [x] Cadastro e login integrados ao banco, com senha em hash bcrypt
 - [x] Sessão por JWT e proteção de rotas por papel (`web/proxy.ts`)
 - [ ] Telas de reserva de quadra (cliente)
-- [ ] Dashboard com estatísticas (admin)
+- [x] Dashboard com estatísticas (admin)
 - [ ] Endurecimento do MySQL (bind-address, menor privilégio, firewall)
 - [ ] Acesso a partir de outras máquinas da rede (`forwarded_port`)
 - [ ] SSL/TLS e redirecionamento HTTP → HTTPS

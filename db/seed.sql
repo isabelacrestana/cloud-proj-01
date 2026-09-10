@@ -30,4 +30,30 @@ INSERT IGNORE INTO quadra (nome, modalidade, coberta, valor_hora) VALUES
   ('Quadra 2 - Rapida', 'tenis',         FALSE,  55.00),
   ('Ginasio Coberto',   'poliesportiva', TRUE,  120.00),
   ('Society A',         'futsal',        FALSE,  90.00),
+<<<<<<< Updated upstream
   ('Arena de Areia',    'beach_tennis',  FALSE,  70.00);
+=======
+  ('Arena de Areia',    'beach_tennis',  FALSE,  70.00),
+  -- Novas quadras adicionadas abaixo:
+  ('Ginasio Volei Principal', 'volei',         TRUE,  100.00),
+  ('Quadra Externa Volei',    'volei',         FALSE,  50.00),
+  ('Basquete Street',         'basquete',      FALSE,  40.00),
+  ('Basquete Premium',        'basquete',      TRUE,   95.00),
+  ('Arena Beach 2',           'beach_tennis',  FALSE,  70.00),
+  ('Quadra 3 - Coberta',      'tenis',         TRUE,   85.00);
+
+-- Reservas de teste para alimentar os graficos e a agenda de hoje
+-- (Ana Souza id=2, Bruno Lima id=3)
+INSERT IGNORE INTO reserva (usuario_id, quadra_id, data_reserva, hora_inicio, hora_fim, status) VALUES
+  (2, 1, CURDATE(), '08:00:00', '09:00:00', 'confirmada'),
+  (3, 5, CURDATE(), '10:00:00', '11:00:00', 'confirmada'),
+  (2, 4, CURDATE(), '18:00:00', '19:00:00', 'confirmada'),
+  (3, 3, CURDATE(), '19:00:00', '20:00:00', 'confirmada'),
+  (2, 1, DATE_SUB(CURDATE(), INTERVAL 1 DAY), '09:00:00', '10:00:00', 'confirmada'),
+  (3, 2, DATE_SUB(CURDATE(), INTERVAL 1 DAY), '18:00:00', '19:00:00', 'confirmada'),
+  (2, 5, DATE_SUB(CURDATE(), INTERVAL 2 DAY), '17:00:00', '18:00:00', 'confirmada'),
+  (3, 4, DATE_SUB(CURDATE(), INTERVAL 3 DAY), '20:00:00', '21:00:00', 'confirmada'),
+  (2, 3, DATE_SUB(CURDATE(), INTERVAL 4 DAY), '14:00:00', '15:00:00', 'confirmada'),
+  (3, 1, DATE_SUB(CURDATE(), INTERVAL 5 DAY), '08:00:00', '09:00:00', 'cancelada');
+
+>>>>>>> Stashed changes
