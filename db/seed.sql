@@ -30,9 +30,6 @@ INSERT IGNORE INTO quadra (nome, modalidade, coberta, valor_hora) VALUES
   ('Quadra 2 - Rapida', 'tenis',         FALSE,  55.00),
   ('Ginasio Coberto',   'poliesportiva', TRUE,  120.00),
   ('Society A',         'futsal',        FALSE,  90.00),
-<<<<<<< Updated upstream
-  ('Arena de Areia',    'beach_tennis',  FALSE,  70.00);
-=======
   ('Arena de Areia',    'beach_tennis',  FALSE,  70.00),
   -- Novas quadras adicionadas abaixo:
   ('Ginasio Volei Principal', 'volei',         TRUE,  100.00),
@@ -56,4 +53,3 @@ INSERT IGNORE INTO reserva (usuario_id, quadra_id, data_reserva, hora_inicio, ho
   (2, 3, DATE_SUB(CURDATE(), INTERVAL 4 DAY), '14:00:00', '15:00:00', 'confirmada'),
   (3, 1, DATE_SUB(CURDATE(), INTERVAL 5 DAY), '08:00:00', '09:00:00', 'cancelada');
 
->>>>>>> Stashed changes
