@@ -14,9 +14,9 @@ Vagrant.configure("2") do |config|
         proxy.vm.box = "ubuntu/focal64"
         proxy.vm.hostname = "proxy"
         proxy.vm.network "private_network", ip: "192.168.57.10", netmask: "255.255.255.0"
+        proxy.vm.network "private_network", ip: "192.168.56.10", netmask: "255.255.255.0", virtualbox__intnet: "rede_interna"
 
-        proxy.vm.network "private_network", ip: "192.168.56.10",
-                         netmask: "255.255.255.0", virtualbox__intnet: "rede_interna"
+        proxy.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
 
         proxy.vm.provider "virtualbox" do |vb|
             vb.memory = "1024"

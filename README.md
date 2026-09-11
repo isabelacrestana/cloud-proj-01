@@ -187,7 +187,7 @@ VMs, instala Nginx, Node e MySQL, importa o banco e compila a aplicação.
 Ao final, o provisionamento do `appserver` imprime:
 
 ```
-==> Aplicacao disponivel via proxy em http://192.168.57.10
+==> Aplicacao disponivel via proxy em http://192.168.57.10 ou http://localhost:8080
 ```
 
 Confirme com `vagrant status` que as três estão `running`.
