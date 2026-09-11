@@ -166,7 +166,8 @@ COOKIE_SECURE=false
 Para gerar o `JWT_SECRET` (mínimo 32 caracteres):
 
 ```powershell
-[Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Max 256 }))
+Para Linux:   openssl rand -base64 32
+Para windows: [Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Max 256 }))
 ```
 
 A chave é local — cada pessoa gera a sua, não precisa ser igual entre integrantes.
